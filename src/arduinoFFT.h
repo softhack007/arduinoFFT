@@ -85,7 +85,7 @@ public:
 		, _vImag(vImag)
 		, _samples(samples)
 #ifdef FFT_SPEED_OVER_PRECISION
-		, _oneOverSamples(1.0 / samples)
+		, _oneOverSamples(1.0f / samples)
 #endif
 		, _samplingFrequency(samplingFrequency)
 		, _windowWeighingFactors(windowWeighingFactors)
@@ -173,9 +173,9 @@ public:
 			c1 = pgm_read_float_near(&(_c1[index]));
 			index++;
 #else
-			T cTemp = 0.5 * c1;
-			c2 = sqrt_internal(0.5 - cTemp);
-			c1 = sqrt_internal(0.5 + cTemp);
+			T cTemp = 0.5f * c1;
+			c2 = sqrt_internal(0.5f - cTemp);
+			c1 = sqrt_internal(0.5f + cTemp);
 #endif
 			c2 = dir == FFTDirection::Forward ? -c2 : c2;
 		}
@@ -242,7 +242,7 @@ public:
 				{
 #ifdef FFT_SPEED_OVER_PRECISION
 					// on many architectures reciprocals and multiplying are much faster than division
-					T oneOverFactor = 1.0 / _windowWeighingFactors[i];
+					T oneOverFactor = 1.0f / _windowWeighingFactors[i];
 					this->_vReal[i] *= oneOverFactor;
 					this->_vReal[this->_samples - (i + 1)] *= oneOverFactor;
 #else
@@ -255,21 +255,21 @@ public:
 		else
 		{
 			// no. values need to be pre-computed or applied
-			T samplesMinusOne = (T(this->_samples) - 1.0);
+			T samplesMinusOne = (T(this->_samples) - 1.0f);
 			T compensationFactor = _WindowCompensationFactors[static_cast<uint_fast8_t>(windowType)];
 			for (uint_fast16_t i = 0; i < (this->_samples >> 1); i++)
 			{
 				T indexMinusOne = T(i);
 				T ratio = (indexMinusOne / samplesMinusOne);
-				T weighingFactor = 1.0;
+				T weighingFactor = 1.0f;
 				// Compute and record weighting factor
 				switch (windowType)
 				{
 				case FFTWindow::Rectangle: // rectangle (box car)
-					weighingFactor = 1.0;
+					weighingFactor = 1.0f;
 					break;
 				case FFTWindow::Hamming: // hamming
-					weighingFactor = 0.54 - (0.46 * cos(TWO_PI * ratio));
+					weighingFactor = 0.54f - (0.46f * cosf(TWO_PI * ratio));
 					break;
 				case FFTWindow::Hann: // hann
 					weighingFactor = 0.54 * (1.0 - cos(TWO_PI * ratio));
@@ -287,10 +287,10 @@ public:
 					weighingFactor = 0.3635819 - (0.4891775 * (cos(TWO_PI * ratio))) + (0.1365995 * (cos(FOUR_PI * ratio))) - (0.0106411 * (cos(SIX_PI * ratio)));
 					break;
 				case FFTWindow::Blackman_Harris: // blackman harris
-					weighingFactor = 0.35875 - (0.48829 * (cos(TWO_PI * ratio))) + (0.14128 * (cos(FOUR_PI * ratio))) - (0.01168 * (cos(SIX_PI * ratio)));
+					weighingFactor = 0.35875f - (0.48829f * (cos(TWO_PI * ratio))) + (0.14128f * (cos(FOUR_PI * ratio))) - (0.01168f * (cos(SIX_PI * ratio)));
 					break;
 				case FFTWindow::Flat_top: // flat top
-					weighingFactor = 0.2810639 - (0.5208972 * cos(TWO_PI * ratio)) + (0.1980399 * cos(FOUR_PI * ratio));
+					weighingFactor = 0.2810639f - (0.5208972f * cos(TWO_PI * ratio)) + (0.1980399f * cos(FOUR_PI * ratio));
 					break;
 				case FFTWindow::Welch: // welch
 					weighingFactor = 1.0 - sq((indexMinusOne - samplesMinusOne / 2.0) / (samplesMinusOne / 2.0));
@@ -313,7 +313,7 @@ public:
 				{
 #ifdef FFT_SPEED_OVER_PRECISION
 					// on many architectures reciprocals and multiplying are much faster than division
-					T oneOverFactor = 1.0 / weighingFactor;
+					T oneOverFactor = 1.0f / weighingFactor;
 					this->_vReal[i] *= oneOverFactor;
 					this->_vReal[this->_samples - (i + 1)] *= oneOverFactor;
 #else
@@ -346,7 +346,7 @@ public:
 				}
 			}
 		}
-		T delta = 0.5 * ((this->_vReal[IndexOfMaxY - 1] - this->_vReal[IndexOfMaxY + 1]) / (this->_vReal[IndexOfMaxY - 1] - (2.0 * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]));
+		T delta = 0.5f * ((this->_vReal[IndexOfMaxY - 1] - this->_vReal[IndexOfMaxY + 1]) / (this->_vReal[IndexOfMaxY - 1] - (2.0f * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]));
 		T interpolatedX = ((IndexOfMaxY + delta) * this->_samplingFrequency) / (this->_samples - 1);
 		if (IndexOfMaxY == (this->_samples >> 1))
 		{
@@ -374,7 +374,7 @@ public:
 				}
 			}
 		}
-		T delta = 0.5 * ((this->_vReal[IndexOfMaxY - 1] - this->_vReal[IndexOfMaxY + 1]) / (this->_vReal[IndexOfMaxY - 1] - (2.0 * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]));
+		T delta = 0.5f * ((this->_vReal[IndexOfMaxY - 1] - this->_vReal[IndexOfMaxY + 1]) / (this->_vReal[IndexOfMaxY - 1] - (2.0f * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]));
 		T interpolatedX = ((IndexOfMaxY + delta) * this->_samplingFrequency) / (this->_samples - 1);
 		if (IndexOfMaxY == (this->_samples >> 1))
 		{
@@ -383,7 +383,7 @@ public:
 		}
 		// returned value: interpolated frequency peak apex
 		frequency = interpolatedX;
-		value = abs(this->_vReal[IndexOfMaxY - 1] - (2.0 * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]);
+		value = abs(this->_vReal[IndexOfMaxY - 1] - (2.0f * this->_vReal[IndexOfMaxY]) + this->_vReal[IndexOfMaxY + 1]);
 	}
 
 private:
@@ -424,7 +424,7 @@ private:
 		u.i = 0x5f375a86 - (u.i >> 1); // gives initial guess y0.
 		float xu = x * u.x;
 		float xu2 = xu * u.x;
-		u.x = (0.125 * 3.0) * xu * (5.0 - xu2 * ((10.0 / 3.0) - xu2)); // Halley's method, repeating increases accuracy
+		u.x = (0.125f * 3.0f) * xu * (5.0f - xu2 * ((10.0f / 3.0f) - xu2)); // Halley's method, repeating increases accuracy
 		return u.x;
 	}
 
@@ -444,7 +444,7 @@ private:
 		u.i = 0x5fe6ec85e7de30da - (u.i >> 1); // gives initial guess y0.
 		double xu = x * u.x;
 		double xu2 = xu * u.x;
-		u.x = (0.125 * 3.0) * xu * (5.0 - xu2 * ((10.0 / 3.0) - xu2)); // Halley's method, repeating increases accuracy
+		u.x = (0.125f * 3.0f) * xu * (5.0f - xu2 * ((10.0f / 3.0f) - xu2)); // Halley's method, repeating increases accuracy
 		return u.x;
 	#endif
 	}
@@ -458,7 +458,7 @@ private:
 	T _oneOverSamples = 0.0;
 #endif
 	T _samplingFrequency = 0;
-	T *_windowWeighingFactors = nullptr;
+	T * _windowWeighingFactors = nullptr;
 	FFTWindow _weighingFactorsFFTWindow;
 	bool _weighingFactorsWithCompensation = false;
 	bool _weighingFactorsComputed = false;
