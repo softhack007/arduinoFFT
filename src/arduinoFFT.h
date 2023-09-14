@@ -117,7 +117,7 @@ public:
 	}
 
 	// Computes in-place complex-to-complex FFT
-	void compute(FFTDirection dir) const
+	void compute(FFTDirection dir) const __restrict__
 	{
 		// Reverse bits /
 		uint_fast16_t j = 0;
@@ -195,7 +195,7 @@ public:
 		}
 	}
 
-	void complexToMagnitude() const
+	void complexToMagnitude() const __restrict__
 	{
 		// vM is half the size of vReal and vImag
 		for (uint_fast16_t i = 0; i < this->_samples; i++)
@@ -204,7 +204,7 @@ public:
 		}
 	}
 
-	void dcRemoval() const
+	void dcRemoval() const __restrict__
 	{
 		// calculate the mean of vData
 		T mean = 0;
@@ -220,7 +220,7 @@ public:
 		}
 	}
 
-	void windowing(FFTWindow windowType, FFTDirection dir, bool withCompensation = false)
+	void windowing(FFTWindow windowType, FFTDirection dir, bool withCompensation = false) __restrict__
 	{
 		// check if values are already pre-computed for the correct window type and compensation
 		if (_windowWeighingFactors && _weighingFactorsComputed &&
@@ -287,10 +287,10 @@ public:
 					weighingFactor = 0.3635819 - (0.4891775 * (cos(TWO_PI * ratio))) + (0.1365995 * (cos(FOUR_PI * ratio))) - (0.0106411 * (cos(SIX_PI * ratio)));
 					break;
 				case FFTWindow::Blackman_Harris: // blackman harris
-					weighingFactor = 0.35875f - (0.48829f * (cos(TWO_PI * ratio))) + (0.14128f * (cos(FOUR_PI * ratio))) - (0.01168f * (cos(SIX_PI * ratio)));
+					weighingFactor = 0.35875f - (0.48829f * (cosf(TWO_PI * ratio))) + (0.14128f * (cosf(FOUR_PI * ratio))) - (0.01168f * (cosf(SIX_PI * ratio)));
 					break;
 				case FFTWindow::Flat_top: // flat top
-					weighingFactor = 0.2810639f - (0.5208972f * cos(TWO_PI * ratio)) + (0.1980399f * cos(FOUR_PI * ratio));
+					weighingFactor = 0.2810639f - (0.5208972f * cosf(TWO_PI * ratio)) + (0.1980399f * cosf(FOUR_PI * ratio));
 					break;
 				case FFTWindow::Welch: // welch
 					weighingFactor = 1.0 - sq((indexMinusOne - samplesMinusOne / 2.0) / (samplesMinusOne / 2.0));
@@ -329,7 +329,7 @@ public:
 		}
 	}
 
-	T majorPeak() const
+	T majorPeak() const __restrict__
 	{
 		T maxY = 0;
 		uint_fast16_t IndexOfMaxY = 0;
@@ -357,7 +357,7 @@ public:
 		return interpolatedX;
 	}
 
-	void majorPeak(T &frequency, T &value) const
+	void majorPeak(T &frequency, T &value) const __restrict__
 	{
 		T maxY = 0;
 		uint_fast16_t IndexOfMaxY = 0;
@@ -451,14 +451,14 @@ private:
 #endif
 
 	/* Variables */
-	T *_vReal = nullptr;
-	T *_vImag = nullptr;
+	T * __restrict _vReal = nullptr; // "_restrict" tells the compiler that this array cannot overap with any other pointer 
+	T * __restrict _vImag = nullptr; // see https://gcc.gnu.org/onlinedocs/gcc/Restricted-Pointers.html
 	uint_fast16_t _samples = 0;
 #ifdef FFT_SPEED_OVER_PRECISION
 	T _oneOverSamples = 0.0;
 #endif
 	T _samplingFrequency = 0;
-	T * _windowWeighingFactors = nullptr;
+	T * __restrict _windowWeighingFactors = nullptr;
 	FFTWindow _weighingFactorsFFTWindow;
 	bool _weighingFactorsWithCompensation = false;
 	bool _weighingFactorsComputed = false;
