@@ -22,6 +22,9 @@
 
 #ifndef ArduinoFFT_h /* Prevent loading library twice */
 #define ArduinoFFT_h
+#pragma GCC push_options    // restore previous optimization flags
+#pragma GCC optimize ("O2") // force optimization for speed
+
 #ifdef ARDUINO
 #if ARDUINO >= 100
 #include "Arduino.h"
@@ -497,4 +500,5 @@ const T ArduinoFFT<T>::_WindowCompensationFactors[10] = {
 	1.5029392863 * 2.0	// welch
 };
 
+#pragma GCC pop_options    // restore previous optimization flags
 #endif
