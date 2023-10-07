@@ -435,8 +435,9 @@ private:
 	static inline V sqrt_internal(typename std::enable_if<std::is_same<V, double>::value, V>::type x)
 	{
 		// According to HosrtBaerbel, on the ESP32 the approximation is not faster, so we use the standard function
-	#ifdef ESP32
-		return sqrtf(x);
+		// allow approximation for ESP32 models without FPU
+	#if defined(ARDUINO_ARCH_ESP32) && !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32C3)
+		return sqrt(x);
 	#else
 		union // get bits for float value
 		{
