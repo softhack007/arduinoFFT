@@ -275,19 +275,19 @@ public:
 					weighingFactor = 0.54f - (0.46f * cosf(TWO_PI * ratio));
 					break;
 				case FFTWindow::Hann: // hann
-					weighingFactor = 0.54 * (1.0 - cos(TWO_PI * ratio));
+					weighingFactor = 0.54f * (1.0f - cosf(TWO_PI * ratio));
 					break;
 				case FFTWindow::Triangle: // triangle (Bartlett)
-					weighingFactor = 1.0 - ((2.0 * abs(indexMinusOne - (samplesMinusOne / 2.0))) / samplesMinusOne);
+					weighingFactor = 1.0f - ((2.0f * abs(indexMinusOne - (samplesMinusOne / 2.0f))) / samplesMinusOne);
 					break;
 				case FFTWindow::Nuttall: // nuttall
-					weighingFactor = 0.355768 - (0.487396 * (cos(TWO_PI * ratio))) + (0.144232 * (cos(FOUR_PI * ratio))) - (0.012604 * (cos(SIX_PI * ratio)));
+					weighingFactor = 0.355768f - (0.487396f * (cosf(TWO_PI * ratio))) + (0.144232f * (cosf(FOUR_PI * ratio))) - (0.012604f * (cosf(SIX_PI * ratio)));
 					break;
 				case FFTWindow::Blackman: // blackman
-					weighingFactor = 0.42323 - (0.49755 * (cos(TWO_PI * ratio))) + (0.07922 * (cos(FOUR_PI * ratio)));
+					weighingFactor = 0.42323f - (0.49755f * (cosf(TWO_PI * ratio))) + (0.07922f * (cosf(FOUR_PI * ratio)));
 					break;
 				case FFTWindow::Blackman_Nuttall: // blackman nuttall
-					weighingFactor = 0.3635819 - (0.4891775 * (cos(TWO_PI * ratio))) + (0.1365995 * (cos(FOUR_PI * ratio))) - (0.0106411 * (cos(SIX_PI * ratio)));
+					weighingFactor = 0.3635819f - (0.4891775f * (cosf(TWO_PI * ratio))) + (0.1365995f * (cosf(FOUR_PI * ratio))) - (0.0106411f * (cosf(SIX_PI * ratio)));
 					break;
 				case FFTWindow::Blackman_Harris: // blackman harris
 					weighingFactor = 0.35875f - (0.48829f * (cosf(TWO_PI * ratio))) + (0.14128f * (cosf(FOUR_PI * ratio))) - (0.01168f * (cosf(SIX_PI * ratio)));
@@ -296,7 +296,7 @@ public:
 					weighingFactor = 0.2810639f - (0.5208972f * cosf(TWO_PI * ratio)) + (0.1980399f * cosf(FOUR_PI * ratio));
 					break;
 				case FFTWindow::Welch: // welch
-					weighingFactor = 1.0 - sq((indexMinusOne - samplesMinusOne / 2.0) / (samplesMinusOne / 2.0));
+					weighingFactor = 1.0f - sq((indexMinusOne - samplesMinusOne / 2.0f) / (samplesMinusOne / 2.0f));
 					break;
 				}
 				if (withCompensation)
@@ -436,7 +436,7 @@ private:
 	{
 		// According to HosrtBaerbel, on the ESP32 the approximation is not faster, so we use the standard function
 	#ifdef ESP32
-		return sqrt(x);
+		return sqrtf(x);
 	#else
 		union // get bits for float value
 		{
