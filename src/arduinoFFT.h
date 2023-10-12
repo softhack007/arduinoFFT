@@ -22,8 +22,13 @@
 
 #ifndef ArduinoFFT_h /* Prevent loading library twice */
 #define ArduinoFFT_h
-#pragma GCC push_options    // restore previous optimization flags
+
+#ifdef ARDUINO_ARCH_ESP32
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 4, 0)    // avoid compiler warnings when using older framework versions
+#pragma GCC push_options    // save previous optimization flags
 #pragma GCC optimize ("O2") // force optimization for speed
+#endif
+#endif
 
 #ifdef ARDUINO
 #if ARDUINO >= 100
@@ -501,5 +506,10 @@ const T ArduinoFFT<T>::_WindowCompensationFactors[10] = {
 	1.5029392863 * 2.0	// welch
 };
 
+#ifdef ARDUINO_ARCH_ESP32
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 4, 0)    // avoid compiler warnings when using older framework versions
 #pragma GCC pop_options    // restore previous optimization flags
+#endif
+#endif
+
 #endif
