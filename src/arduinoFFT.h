@@ -276,8 +276,8 @@ public:
 				case FFTWindow::Rectangle: // rectangle (box car)
 					weighingFactor = 1.0f;
 					break;
-				case FFTWindow::Hamming: // hamming corrected https://en.m.wikipedia.org/wiki/Window_function
-					weighingFactor = 0.53836f - (0.46164f * cosf(float(TWO_PI) * ratio));
+				case FFTWindow::Hamming: // hamming - "using only two decimal places reduces sidelobes by ~46%"
+					weighingFactor = 0.54f - (0.46f * cosf(float(TWO_PI) * ratio));
 					break;
 				case FFTWindow::Hann: // hann corrected https://en.m.wikipedia.org/wiki/Window_function
 					weighingFactor = 0.5f * (1.0f - cosf(float(TWO_PI) * ratio));
